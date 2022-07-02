@@ -7,7 +7,6 @@ import morgan from 'morgan';
 import helmet from 'helmet';
 import xss from 'xss-clean';
 import mongoSanitize from 'express-mongo-sanitize';
-import rateLimiter from 'express-rate-limit';
 
 import { dirname } from 'path';
 import { fileURLToPath } from 'url';
@@ -34,17 +33,10 @@ if (process.env.NODE_ENV !== 'production') {
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
+app.use(express.static(path.resolve(__dirname, './client/build')));
 app.use(helmet());
 app.use(xss());
 app.use(mongoSanitize());
-app.use(
-  rateLimiter({
-    windowMs: 15 * 60 * 1000, // 15 minutes
-    max: 10,
-    message:
-      'Too many requests from this IP, please try again after 15 minutes',
-  })
-);
 
 app.use(express.json());
 app.use(fileUpload({ useTempFiles: true }));
