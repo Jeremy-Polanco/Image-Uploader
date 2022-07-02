@@ -4,6 +4,14 @@ import dotenv from 'dotenv';
 dotenv.config();
 import 'express-async-errors';
 import morgan from 'morgan';
+import helmet from 'helmet';
+import xss from 'xss-clean';
+import mongoSanitize from 'express-mongo-sanitize';
+import rateLimiter from 'express-rate-limit';
+
+import { dirname } from 'path';
+import { fileURLToPath } from 'url';
+import path from 'path';
 
 import fileUpload from 'express-fileupload';
 import cloudinaryModule from 'cloudinary';
@@ -20,12 +28,30 @@ import connectDB from './db/connectDB.js';
 // image router
 import imageRouter from './routes/imageRouter.js';
 
+const __dirname = dirname(fileURLToPath(import.meta.url));
+
+app.use(helmet());
+app.use(xss());
+app.use(mongoSanitize());
+app.use(
+  rateLimiter({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 10,
+    message:
+      'Too many requests from this IP, please try again after 15 minutes',
+  })
+);
+
 app.use(express.json());
 app.use(fileUpload({ useTempFiles: true }));
 
 if (process.env.NODE_ENV !== 'production') {
   app.use(morgan('dev'));
 }
+
+app.get('*', (req, res) => {
+  res.sendFile(path.resolve(__dirname, './client/build', 'index.html'));
+});
 
 app.get('/', (req, res) => {
   res.status(200).send('image uploader');
