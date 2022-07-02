@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import { useAppContext } from '../context/appContext';
 import { BsCheckCircleFill } from 'react-icons/bs';
@@ -15,7 +15,7 @@ const ImageContainer = () => {
   const { image } = useAppContext();
   return (
     <Wrapper>
-      <img src={image} alt='added image' className='img' />
+      <img src={image} alt='added source' className='img' />
       <div className='link-container'>
         <span>{image}</span>
         <button

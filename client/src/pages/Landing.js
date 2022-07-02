@@ -2,7 +2,7 @@ import { Card, Loading } from '../components/index';
 import { useAppContext } from '../context/appContext';
 
 const Landing = () => {
-  const { isLoading, image } = useAppContext();
+  const { isLoading } = useAppContext();
 
   if (isLoading) {
     return <Loading />;
