@@ -28,6 +28,10 @@ import connectDB from './db/connectDB.js';
 // image router
 import imageRouter from './routes/imageRouter.js';
 
+if (process.env.NODE_ENV !== 'production') {
+  app.use(morgan('dev'));
+}
+
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
 app.use(helmet());
@@ -45,19 +49,12 @@ app.use(
 app.use(express.json());
 app.use(fileUpload({ useTempFiles: true }));
 
-if (process.env.NODE_ENV !== 'production') {
-  app.use(morgan('dev'));
-}
+app.use('/api/v1', imageRouter);
 
 app.get('*', (req, res) => {
   res.sendFile(path.resolve(__dirname, './client/build', 'index.html'));
 });
 
-app.get('/', (req, res) => {
-  res.status(200).send('image uploader');
-});
-
-app.use('/api/v1', imageRouter);
 // middleware
 import notFoundMiddleware from './middleware/not-found.js';
 import errorHandlerMiddleware from './middleware/error-handler.js';
